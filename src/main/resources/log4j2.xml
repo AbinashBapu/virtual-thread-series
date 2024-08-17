@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="INFO" monitorInterval="30">
+
     <Appenders>
+        <!-- Console Appender Configuration -->
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="FileAppender" fileName="application-${date:yyyyMMdd}.log" immediateFlush="false" append="true">
-            <PatternLayout
-                    pattern="%d{dd-MMM-yyyy HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n"/>
-        </File>
+
+        <!-- Rolling File Appender Configuration -->
+        <RollingFile name="RollingFileAppender" fileName="logs/application.log" filePattern="logs/application-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{dd-MMM-yyyy HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingFile>
     </Appenders>
+
     <Loggers>
-        <Root level="trace">
+        <!-- Asynchronous Root Logger Configuration -->
+        <AsyncRoot level="trace">
             <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="FileAppender"/>
-        </Root>
+            <AppenderRef ref="RollingFileAppender"/>
+        </AsyncRoot>
     </Loggers>
 </Configuration>
